@@ -203,4 +203,97 @@ ansible的模块有很多，下面仅提及较常用的模块
 
 # ansible gui -m copy -a 'src=/root/a/httpd.conf dest=/etc/httpd/conf/httpd.conf owner=root group=root mode=644 backup=yes'	#backup只会在文件有改动后才会备份
 
+# ansible gui -m copy -a "content=HttpServer dest=/var/www/html/index.html"	#直接将content的内容复制到远端文件中
+```
+
+#### get_url
+使用get_url时是将链接文件下载到主机组内的所有主机，除非手动指定单个主机
+```shell
+ # ansible gui -m get_url -a 'url=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm dest=/etc/yum.repos.d/'	#下载文件到指定目录
+
+# md5sum epel-release-latest-7.noarch.rpm	#使用ansible验证md5之前要先计算出文件的md5值
+# ansible gui -m get_url -a 'url=https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm dest=/etc/yum.repos.d/ checksum=312e447861ec8dc90f2eef5d85778059'	#下载链接时验证md5值
+```
+
+#### file
+```shell
+# ansible gui -m file -a 'path=/var/www/html/index.html state=touch owner=apache group=apache mode=644'	#创建文件
+
+# ansible gui -m file -a 'path=/var/www/html/dd state=directory owner=apache group=apache mode=755'	#创建目录
+
+# ansible gui -m file -a 'path=/var/www/html/dd owner=root group=root mode=755'	#更改目录权限
+
+# ansible gui -m file -a 'path=/var/www/html/dd owner=root group=root recurse=yes'	#更改目录及目录下的递归授权
+```
+
+#### service
+```shell
+# ansible gui -m service -a 'name=httpd state=started enabled=yes'	#启动httpd服务并设置为开机自启
+```
+service模块的选项比较单一，用表格的方式列出
+选项|作用
+:-:|:-:
+started|启动
+restarted|重启
+stopped|停止
+reloaded|重载
+
+#### group
+```shell
+# ansible gui -m group -a 'name=news gid=9999 state=present'	#创建一个新组并设置gid
+
+# ansible gui -m group -a 'name=http gid=8888 system=true'	#创建系统组
+
+# ansible gui -m group -a 'name=news state=absent'	#删除组
+```
+
+#### user
+```shell
+# ansible gui -m user -a 'name=joh uid=1040 group=adm'	#创建用户并指定uid,gid
+
+# ansible gui -m user -a 'name=joh shell=/sbin/nologin groups=bin,sys'	#禁止账户登录并追加两个附属组
+
+# ansible localhost -m debug -a "msg={{ '123' | password_hash('sha512','salt') }}"	#生成加密后的hash字符串
+
+# ansible gui -m user -a 'name=jsm password=$6$salt$jkHSO0tOjmLW0S1NFlw5veSIDRAVsiQQMTrkOKy4xdCCLPNIsHhZkIRlzfzIvKyXeGdOfCBoW1wJZPLyQ9Qx/1 create_home=yes'	#创建用户设置密码，create_home默认是开启的
+
+# ansible gui -m user -a 'name=jsm state=absent remove=yes'	#remove表示彻底删除，等同于userdel -r
+
+# ansible gui -m user -a 'name=http generate_ssh_key=yes ssh_key_bits=2048 ssh_key_file=.ssh/id_rsa'	#创建ssh秘钥对，指定秘钥强度2048，指定秘钥存放路径
+```
+指定单个组和多个组时需要注意group与groups的使用
+
+#### cron
+```shell
+# ansible gui -m cron -a 'name=job1 job="ls > /dev/null"'	#每分钟执行一次job，name表示这个定时任务的注释
+
+# ansible gui -m cron -a 'name=job2 minute=0 hour=5,2 job="ls > /dev/null"'	#凌晨5点和2点执行job
+
+# ansible gui -m cron -a 'name=job2 minute=0 hour=5,2 job="ls > /dev/null" disabled=yes'	#关闭定时任务
+```
+关闭定时任务的命令需要与配置定时任务时的命令一样，仅在后续添加一个disabled选项
+
+#### mount
+mount需要注意几个state参数
+选项|作用
+:-:|:-:
+mounted|永久挂载，立即生效
+present|永久挂载，写入fstab文件中，但不会立即生效
+unmounted|临时卸载，不会删除fstab文件中的条目
+absent|永久卸载，立即生效
+```shell
+# ansible gui -m mount -a 'src=/dev/sr0 path=/mnt/cdrom fstype=iso9660 opts=defaults state=mounted'	#永久挂载光盘文件
+
+# ansible gui -m mount -a 'src=/dev/sr0 path=/mnt/cdrom fstype=iso9660 opts=defaults state=unmounted'	#临时卸载
+```
+
+#### firewalld && selinux
+```shell
+# ansible gui -m selinux -a 'state=disabled'	#关闭selinux
+
+# ansible gui -m firewalld -a 'service=http permanent=yes state=enabled'	#永久放行http服务，但不会立即生效
+
+# ansible gui -m firewalld -a 'zone=public port=8080/tcp permanent=yes state=enabled'	#放行8080端口，zone默认为public
+
+# ansible gui -m firewalld -a 'zone=public port=8080-8090/tcp permanent=yes immediate=yes state=enabled'	#永久放行8080~8090端口，immediate选项表示立即生效
 ```
