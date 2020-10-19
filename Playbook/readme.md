@@ -19,6 +19,7 @@ task在整个playbook文件中占据了绝大部分，而play就可以简单的�
 短横线|表示列表项，使用一个短横线加一个空格。多个项使用同样的缩进级别作为同一列表。
 
 ### 启动http服务playbook示例
+下面示例中Mount模块会用到Centos-7本地镜像，所以需要先连接镜像
 ```shell
 # cat /home/hebo/learn_ansible/http.yml
 - hosts: gui							#此处即为play，指定主机
@@ -80,3 +81,5 @@ task在整个playbook文件中占据了绝大部分，而play就可以简单的�
 ### 其他Playbook示例
 名称|作用
 :-:|:-:
+nfs.yml|安装nfs服务
+lamp-kod.yml|安装可道云云盘
