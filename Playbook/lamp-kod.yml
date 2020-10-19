@@ -1,0 +1,61 @@
+#执行此剧本之前,建议先停止主机上的web服务和旧的php-fpm进程，也需要清理关于php的安装包
+#Before executing this script, it is recommended to stop the web service and old
+#php-fpm process on the host first, and also need to clean up the php installation package
+#
+#If you have installed php on your host, you can also use the following command to uninstall it
+#
+#yum list installed | grep php71w | gawk '{print $1}' | xargs | sed -r 's#(.*)#yum remove -y \1#g' | bash
+#
+
+- hosts: gui
+
+  tasks: 
+    - name: Mount CDROM
+      mount: 
+        path: /mnt/cdrom
+        src: /dev/sr0
+        fstype: iso9660
+        state: mounted
+        opts: defaults
+
+    - name: Install Httpd PHP Firewalld
+      yum: 
+        name: httpd,php,php-pdo,firewalld,php-mbstring,php-gd
+        state: present
+
+    - name: Started Httpd Server
+      service: 
+        name: httpd
+        state: started
+
+    - name: Started Firewalld Server
+      service: 
+        name: firewalld
+        state: started
+
+    - name: Configure Firewalld Server
+      firewalld: 
+        service: http
+        permanent: yes
+        immediate: yes
+        state: enabled
+
+    - name: Download Php Index file
+      get_url: 
+        url: http://fj.xuliangwei.com/public/index.php
+        dest: /var/www/html/test.php
+        mode: 644
+
+# This is the decompression module of ansible
+    - name: Get Kod Cloud Code
+      unarchive: 
+        src: /home/hebo/Downloads/kodbox.1.13.zip
+        dest: /var/www/html/
+        mode: 0777
+
+    - name: Change permissions
+      file: 
+        path: /var/www/html
+        owner: apache
+        group: apache
+        recurse: yes

@@ -161,7 +161,7 @@ ansible的模块有很多，下面仅提及较常用的模块
 :-:|:-:
 命令|command(默认)  shell  scripts
 安装|yum  yum_repository
-配置|copy  file  grt_url
+配置|copy  file  grt_url lineinfile
 启动|service  systemd
 用户|user  group
 任务|cron
@@ -224,6 +224,14 @@ ansible的模块有很多，下面仅提及较常用的模块
 # ansible gui -m file -a 'path=/var/www/html/dd owner=root group=root mode=755'	#更改目录权限
 
 # ansible gui -m file -a 'path=/var/www/html/dd owner=root group=root recurse=yes'	#更改目录及目录下的递归授权
+```
+
+#### lineinfile
+此模块仅作为扩展模块，常用在修改文件内容。有兴趣百度一下这个模块的选项的作用。
+```shell
+# ansible gui -m lineinfile -a "dest=/etc/exports line='hello world'"	#向/etc/exports文件的最后一行插入文本
+
+# ansible-doc lineinfile
 ```
 
 #### service

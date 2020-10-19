@@ -1,0 +1,62 @@
+- hosts: 10.250.1.51
+
+  tasks: 
+    - name: Mount CDROM
+      mount: 
+        path: /mnt/cdrom
+        src: /dev/sr0
+        fstype: iso9660
+        opts: defaults
+        state: mounted
+
+    - name: Install NFS Server
+      yum: 
+        name: nfs-utils
+        state: present
+
+    - name: Create Share Directory
+      file: 
+        path: /data/
+        state: directory
+        owner: nfsnobody
+        group: nfsnobody
+        mode: 755
+
+    - name: Configure NFS Server 
+      lineinfile: 
+        path: /etc/exports
+        line: "/data/ *(rw,sync)"
+
+    - name: Configure Selinux
+      selinux: 
+        state: disabled
+
+    - name: Configure Firewalld Server
+      firewalld: 
+        service: nfs
+        state: enabled
+        permanent: yes
+        immediate: yes
+        zone: public
+
+    - name: Start NFS Server
+      service: 
+        name: nfs-server
+        state: started
+        enabled: yes
+
+- hosts: 172.20.44.116  #由于本人使用Ubuntu系统客户端，根据自己实际环境，可能要安装nfs-utils且关闭防火墙
+
+  tasks: 
+    - name: Create Share Directory
+      file: 
+        path: /mnt/nfs
+        state: directory
+
+    - name: Mount NFS Share directory
+      mount: 
+        path: /mnt/nfs
+        src: 10.250.1.51:/data/
+        fstype: nfs
+        opts: defaults
+        state: mounted
