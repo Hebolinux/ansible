@@ -1,0 +1,6 @@
+- hosts: gui
+  tasks: 
+    - name: Configure Zabbix Agent
+      template: 
+        src: zabbix_agentd.j2
+        dest: /etc/zabbix/zabbix_agentd.conf

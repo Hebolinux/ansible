@@ -1,0 +1,27 @@
+- hosts: szzt
+  vars : 
+    - maxconn: 2048
+  tasks: 
+    - name: Install Memcached Server
+      yum: 
+        name: memcached
+        state: present
+
+    - name: Configure Memcached Server
+      template: 
+        src: ./memcached.j2
+        dest: /etc/sysconfig/memcached
+
+    - name: Start Memcached Server
+      service: 
+        name: memcached
+        state: started
+        enabled: yes
+
+    - name: Check Memcached Configure
+      shell: ss -tunpl | grep memcached
+      register: check_memcached
+
+    - name: Debug Memcached Server
+      debug: 
+        msg: "{{ check_memcached.stdout_lines }}"

@@ -153,3 +153,17 @@ $ sudo ansible gui -m setup    #查看被控端的变量信息
       debug:
         msg: IP address "{{ ansible_fqdn }}" is "{{ ansible_eth0.ipv4.address }}"
 ```
+
+### playbook示例
+命名|作用
+:-:|:-:
+zabbix-agent-example.yml|使用facts变量根据被控端的主机名更改zabbix-agent的配置文件
+memcached-example.yml|使用facts变量根据不同的内存生成不同的Memcached配置文件
+hostname-example.yml|使用register变量更改远端主机名
+nginx_php.yml|LNMP+可道云示例
+
+[可道云软件下载地址](https://kodcloud.com/download/)
+或者使用此命令下载
+```shell
+wget http://static.kodcloud.com/update/download/kodbox.1.13.zip
+```

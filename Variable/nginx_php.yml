@@ -1,0 +1,98 @@
+- hosts: gui
+  vars: 
+    package_name: 
+      - nginx
+      - php
+      - php-fpm
+      - php-pdo
+      - php-mbstring
+      - php-gd
+      - unzip
+
+  tasks: 
+    - name: Install Packages
+      yum: 
+        name: "{{ package_name }}"
+        state: present
+
+    - name: Create Group
+      group: 
+        name: www
+        gid: 666
+        state: present
+
+    - name: Create User
+      user: 
+        name: www
+        group: www
+        state: present
+        shell: /sbin/nologin
+        create_home: no
+
+    - name: Configure Nginx File
+      template: 
+        src: ./nginx.j2
+        dest: /etc/nginx/nginx.conf
+        backup: yes
+
+    - name: Configure Kod File
+      template: 
+        src: ./kod.conf.j2
+        dest: /etc/nginx/conf.d/kod.conf
+        backup: yes
+
+    - name: Create Index File Directory
+      file: 
+        path: /var/www/html
+        state: directory
+
+    - name: Get Kod Cloud Code
+      unarchive: 
+        src: ./kodbox.1.13.zip
+        dest: /var/www/html
+
+    - name: Change Authority
+      file: 
+        path: /var/www/html
+        owner: www
+        group: www
+        recurse: yes
+        mode: 0777
+
+    - name: Configure PHP_FPM Server
+      copy: 
+        src: ./www.conf.j2
+        dest: /etc/php-fpm.d/www.conf
+
+    - name: Configure PHP Server
+      copy: 
+        src: ./php.ini.j2
+        dest: /etc/php.ini
+
+    - name: Start Nginx Server
+      service: 
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Start PHP-FPM Server
+      service: 
+        name: php-fpm
+        state: started
+        enabled: yes
+
+    - name: Configure Firewalld
+      firewalld: 
+        service: http
+        state: enabled
+        immediate: yes
+        permanent: yes
+
+    - name: Configure SELinux
+      selinux: 
+        state: disabled
+
+    - name: Change Nginx Default Index
+      shell: 
+        cmd: mv nginx.conf.default nginx.conf.default.bak
+        chdir: /etc/nginx/

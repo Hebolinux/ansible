@@ -1,0 +1,9 @@
+- hosts: szzt
+  tasks: 
+    - name: Debug Facts
+      debug: 
+        msg: "{{ ansible_eth0.ipv4.address }}"
+
+    - name: Change hostname
+      hostname: 
+        name: web_{{ ansible_eth0.ipv4.address }}
