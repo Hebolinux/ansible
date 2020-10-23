@@ -1,0 +1,13 @@
+- hosts: szzt
+  tasks: 
+    - name: Get Random Number
+      shell: echo $RANDOM | md5sum | cut -c 1-8
+      register: random_hostname
+
+    - name: Debug
+      debug: 
+        msg: "{{ random_hostname.stdout_lines }}"
+
+    - name: Configure Hostname
+      hostname: 
+        name: "{{ random_hostname.stdout }}"

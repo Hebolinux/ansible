@@ -40,6 +40,10 @@
         immediate: yes
         state: enabled
 
+    - name: Configure SELinux
+      selinux: 
+        state: disabled
+
     - name: Download Php Index file
       get_url: 
         url: http://fj.xuliangwei.com/public/index.php
