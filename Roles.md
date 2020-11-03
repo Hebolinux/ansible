@@ -161,7 +161,9 @@ packages:
   - php-gd
   - php-mbstring
 ```
-仅展示关于vars的内容，其他内容前面都有
+```diff
+- 如果在roles中想使用host_vars或group_vars，则在roles同级（比如nginx同级目录下）目录下创建host_vars或group_vars目录即可
+```
 
 Ansible Galaxy
 --------------

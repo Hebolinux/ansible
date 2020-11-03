@@ -70,7 +70,7 @@ config file|ansible的主配置文件的路径
 configured module|ansible模块查找路径
 ansible python|ansible模块在python中的路径
 executable location|ansible命令执行路径
-host_key_checking|检查ssh认证，默认情况被注释
+host_key_checking|检查远程主机时，是否验证对方的公钥，建议取消注释
 timeout|超时时间，主机较多时可适当延长超时时间
 ```diff
 - 需要注意的是，config file的位置是有优先级的，配置文件的路径的不同导致优先级的不同，优先级高的路径优先被读取。如果有多个config file，则优先级高的config file生效。优先级从高到低如下：
