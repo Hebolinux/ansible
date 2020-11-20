@@ -56,7 +56,7 @@ file_name=group_vars
 ```
 在inventory主机清单中定义变量后在playbook中可以直接调用 <br />
 
-示例：官方推荐在playbook项目目录下建立host_var和group_vars两个目录，分别在两个目录中存放与主机/主机组相关的变量
+示例：官方推荐在playbook项目目录下建立host_vars和group_vars两个目录，分别在两个目录中存放与主机/主机组相关的变量
 ```shell
 $ mkdir project && cd project    #创建一个项目目录
 $ mkdir group_vars    #创建组变量目录
@@ -80,7 +80,6 @@ $ cat test.yml
 - 系统在group_vars目录下提供了一个特殊文件，all，playbook中所有的组都可以使用此文件中的变量
 - 主机变量与组变量的编写是一样的，主机变量文件命名也必须与inventory清单中的主机名一致
 - 注：playbook首先会去找host_vars下的变量文件，如果host_vars下没有，则playbook会继续找本IP所归属的group_vars下的变量，如果也没有，则playbook会找到all文件，如果all文件也没有，则报错
-
 - 在playbook中引用变量时要特别注意双引号
 ```
 
@@ -135,6 +134,7 @@ facts用于采集被控端的状态指标，比如IP地址、主机名称、cpu�
 ```
 ```shell
 $ sudo ansible gui -m setup    #查看被控端的变量信息
+$ sudo ansible gui -m setup -a 'filter=ansible_default_ipv4'    #ansible过滤信息
 ```
 示例：获取facts变量中的主机名及其对应IP地址
 ```shell
