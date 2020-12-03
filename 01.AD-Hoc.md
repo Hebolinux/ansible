@@ -171,6 +171,7 @@ ansible的模块有很多，下面仅提及较常用的模块
 #### ping
 ```shell
 # ansible all -m ping	#测试主机联通性
+# ansible all -m ping -k    #-k选项表示输入被控端对应当前账户的密码，此选项多用于还未使用秘钥连接的时候
 ```
 
 #### command & shell
